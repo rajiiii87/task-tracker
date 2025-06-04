@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="images/heartjoy" href="/images/h1j.png">
+    <title>Login Page</title>
+
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    display: flex;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 700px;
+    width: 55%;
+        height: 80%;
+        box-shadow: 0 0 20px rgba(218, 56, 145, 0.932);
+}
+image-section {
+    flex: 1;
+}
+
+.image-section img {
+    height: 100%;
+    width: 390px;
+    object-fit: cover;
+}
+
+.form-section {
+    flex: 1;
+    padding: 40px;
+    width: 430px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+form-section h2 {
+    margin-bottom: 20px;
+}
+button {
+    padding: 10px;
+    border: none;
+    text-align: center;
+    background-color: lightblue;
+    color: black;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 40px;
+}
+#username, #password{
+    padding: 9px;
+}
+button:hover {
+    background-color: #0056b3;
+}
+@media screen and (max-width: 700px) {
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.login-container {
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 700px;
+    width: 65%;
+    height: 90%;
+    box-shadow: 0 0 20px rgba(218, 56, 145, 0.932);
+}
+.image-section img {
+    height: 40%;
+    width: 190px;
+    display: none;
+}
+#username, #password{
+    padding: 12px;
+}
+.form-section{
+    padding: 40px;
+    width: 430px;
+    justify-content: center;
+}
+form-section h2{
+    margin-bottom: 20px;
+}
+button{
+    padding: 10px 30px;
+    border: none;
+    background-color: lightblue;
+    color: black;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 40px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+}
+</style>
+<body>
+    <div class="login-container">
+        <div class="image-section">
+            <img src="images/hi.jpg">
+        </div>
+        <div class="form-section">
+            <h1 style="font: family cursive;text-align: center;font-size: 50px;">HeartJoy</h1><br>
+            <form id="loginForm">
+            <label>Username</label><br><br>
+            <input type="text" id="username" placeholder="username" title="username must not be more than 6" required><br><br>
+            <label>Password</label><br><br>
+            <input type="password" id="password" placeholder="Password" pattern="^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])\S{8,}$"
+            title="Password must contain at least one number, 
+               one alphabet, one symbol, and be at 
+               least 8 characters long" required><br><br>
+            <button type="submit" id="login" style="width: 37%; background-color: lightskyblue;">Login</button>
+            <h5>__________OR___________</h5>
+            <a href="forgotpass.html" style="color: red;">Forget Password?</a><br><br>
+            <a href="cr.html">Create New Account</a><br>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('http://localhost:4000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.user) {
+                    alert('Login successful!');
+                    window.location.href = "to.html";
+                } else {
+                    alert('Invalid username or password.');
+                }
+            } else {
+                alert('Login failed.');
+            }
+        } catch (err) {
+            alert('An error occurred: ' + err);
+        }
+    });
+</script>
+</html>

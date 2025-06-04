@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager</title>
+  <link rel="icon" type="images/heartjoy" href="/images/h1j.png">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color:antiquewhite;
+  color: #333;
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.form-container, .task-list {
+  background: #fff;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"], textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 0;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background: #fff;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-title {
+  font-weight: bold;
+}
+
+.task-buttons button {
+  margin-left: 5px;
+  padding: 5px 10px;
+}
+
+.task-buttons button.update {
+  background: #28a745;
+}
+
+.task-buttons button.delete {
+  background: #dc3545;
+}
+.header{
+    margin-left: 420px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 40px;
+}
+.task-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+}
+.task-table th, .task-table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+}
+.task-table th {
+      background-color: #f0f0f0;
+}
+</style>
+<body>
+  <div class="container">
+    <div class="header">
+    <span style="margin-right: 180px; font-size: 50px;">HeartJoy</span>
+    <span><a href="user.html" style="border: 1px solid rgb(240, 6, 123);border-radius: 10px;padding:10px ; box-shadow: 0 0 9px rgba(218, 56, 145, 0.932);">Admin</a></span>
+    <span><a href="login.html" style="border: 1px solid rgb(240, 6, 123);border-radius: 10px;padding:10px ; box-shadow: 0 0 9px rgba(218, 56, 145, 0.932);">Log Out</a></span>
+    </div>
+    <h1>Task Created</h1>
+    <table id="task-table" class="task-table">
+      <thead>
+        <tr>
+          <th>Task Title</th>
+          <th>Task Description</th>
+          <th>Status</th>
+          <th>Edit</th>
+          <th>Delete</th>
+          
+        </tr>
+      </thead>
+      <tbody id="task-body">
+      </tbody>
+    </table>
+  </div>
+  <section>
+    <h1 style="padding-top: 150px;"> User Task Updation</h1>
+    <table id="task-table" class="task-table">
+      <thead>
+        <tr>
+          <th>Task Title</th>
+          <th>Task Description</th>
+          <th>Status</th>
+          <th>Edit</th>
+          <th>Delete</th>          
+        </tr>
+      </thead>    
+  </section>
+</body>
+<script>
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    let taskRow;
+    async function displayTasks() {
+    const taskBody = document.getElementById('task-body');
+    taskBody.innerHTML = ''; // Clear existing tasks
+    try {
+      const response = await fetch('http://localhost:4000/task/get-all-tasks', {
+          method: 'GET'
+      });
+      const data = await response.json();
+      console.log(data);
+
+      data.data.forEach((task, index) => {
+      const taskRow = document.createElement('tr');
+      taskRow.innerHTML = `
+        <td>${task.task_name}</td>
+        <td>${task.description}</td>
+        <td>${task.status}</td>
+        <td><button class="editTaskButton" onclick="editTaskItem('${task._id}')">Edit</button></td>
+        <td><button class="deleteTaskButton" onclick="deleteTaskItem('${task._id}')">Delete</button></td>
+      `;
+       taskBody.appendChild(taskRow);     
+       tasks[index] = { title: task.task_name, description: task.description, status: task.status };
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+
+      // const editButton = taskRow.querySelector('.editTaskButton');
+      // editButton.addEventListener('click', function(){
+      // const taskTitleCell = taskRow.querySelector('td:first-child');
+      //   const taskDescriptionCell = taskRow.querySelector('td:nth-child(2)');
+      //   const task_name = taskTitleCell.textContent;
+      //   const description = taskDescriptionCell.textContent;
+      //   const editTaskForm = document.createElement('form');
+      //   editTaskForm.innerHTML = `
+      //     <input type="text" value="${task_name}" required>
+      //     <textarea required>${description}</textarea>
+      //     <button type="submit">Save</button>`;
+      //   taskTitleCell.innerHTML = '';
+      //   taskDescriptionCell.innerHTML = '';
+      //   taskTitleCell.appendChild(editTaskForm);
+      //   taskDescriptionCell.appendChild(editTaskForm);
+      //   editTaskForm.addEventListener('submit', (event) => {
+      //     event.preventDefault();
+      //     const newTaskTitle = editTaskForm.querySelector('input').value;
+      //     const newTaskDescription = editTaskForm.querySelector('textarea').value;
+      //     taskTitleCell.textContent = newTaskTitle;
+      //     taskDescriptionCell.textContent = newTaskDescription;
+      //     tasks[index] = { title: newTaskTitle, description: newTaskDescription };
+      //     localStorage.setItem('tasks', JSON.stringify(tasks));
+      //     displayTasks();
+      //   });
+      // });
+    })
+
+    
+    // const deleteButton = taskRow.querySelector('.deleteTaskButton');
+    // deleteButton.addEventListener('click', function() {
+    // tasks.splice(index, 1);
+    // localStorage.setItem('tasks', JSON.stringify(tasks));
+    // displayTasks();
+    //  });
+     }
+    catch (err) {
+        alert('An error occurred: ' + err);
+    }
+  }
+  async function deleteTaskItem(taskId) {
+      const confirmation = confirm('Are you sure you want to delete this task?');
+      if (confirmation) {
+        try {
+          const response = await fetch(`http://localhost:4000/task/delete-task/${taskId}`, {
+            method: 'DELETE'
+          });
+          if (response.ok) {
+            displayTasks();
+            alert('Task deleted successfully!');
+          } else {
+            alert('Failed to delete task.');
+          }
+        } catch (err) {
+          alert('An error occurred: ' + err);
+        }
+      }
+    }
+
+    displayTasks();
+
+    function editTaskItem(taskId) {
+        console.log(taskId);
+        window.location.href = "to2.html?taskId="+taskId;
+    }
+</script>
+</html>

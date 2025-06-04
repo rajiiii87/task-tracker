@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="images/heartjoy" href="/images/h1j.png">
+    <title>Registration Page</title>
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    display: flex;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 700px;
+    width: 55%;
+        height: 89%;
+        box-shadow: 0 0 20px rgba(218, 56, 145, 0.932);
+}
+image-section {
+    flex: 1;
+}
+
+.image-section img {
+    height: 100%;
+    width: 390px;
+    object-fit: cover;
+}
+
+.form-section {
+    flex: 1;
+    padding: 40px;
+    width: 430px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+form-section h2 {
+    margin-bottom: 20px;
+}
+button {
+    padding: 10px 40px;
+    border: none;
+    text-align: center;
+    background-color: lightblue;
+    color: black;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 40px;
+}
+#username, #password, #confirm-password, #email{
+    padding: 9px;
+}
+button:hover {
+    background-color: #0056b3;
+}
+@media screen and (max-width: 700px) {
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 700px;
+    width: 65%;
+    height: 90%;
+    box-shadow: 0 0 20px rgba(218, 56, 145, 0.932);
+}
+
+.image-section img {
+    height: 40%;
+    width: 190px;
+    display: none;
+}
+#username, #password, #confirm-password, #email{
+    padding: 12px;
+}
+.form-section {
+    padding: 40px;
+    width: 430px;
+    justify-content: center;
+}
+form-section h2 {
+    margin-bottom: 20px;
+}
+button {
+    padding: 10px 30px;
+    border: none;
+    background-color: lightblue;
+    color: black;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 40px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+}
+</style>
+<body>
+    <div class="login-container">
+        <div class="image-section">
+            <img src="images/hi.jpg">
+        </div>
+        <div class="form-section">
+            <h1 style="font: family cursive;text-align: center;font-size: 50px;">HeartJoy</h1><br>
+            <form id="registration-form">
+                <label>Username</label><br><br>
+                <input type="text" id="username" placeholder="username or email" required><br><br>
+                <label>Password</label><br><br>
+                <input type="password" id="password" placeholder="Password" required><br><br>
+                <label>Confirm Password</label><br><br>
+                <input type="password" id="confirm-password" placeholder="Enter your password" required><br><br>
+                <label>Email</label><br><br>
+                <input type="email" id="email" placeholder="Enter your email" required><br><br>
+                <button type="submit" style="background-color: lightskyblue;margin-left: 55px;">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    document.getElementById('registration-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent form from submitting
+
+        // Get form values
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        var confirm_password = document.getElementById('confirm-password').value;
+        var email = document.getElementById('email').value;
+
+        console.log({ username, email, password, confirm_password })
+        const uregData = {
+        username : username,
+    email : email,
+    password : password,
+    confirm_password : confirm_password,
+    };
+
+    console.log(uregData);
+
+    try {
+        const response = await fetch("http://localhost:4000/auth/register", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(uregData)
+        });
+
+        if (response.status === 200) {
+            const responseData = await response.json();
+            sessionStorage.setItem('loggedInUser', JSON.stringify(responseData));
+            alert('Registration successful');
+            window.location.href = 'login.html'; // Redirect to login page after registration
+        } else {
+            const errorData = await response.json();
+            alert(errorData.message || 'Registration failed. Please try again.');
+        }
+    } catch (error) {
+        alert('An error occurred during registration.');
+        console.error('Registration error:', error);
+    }
+    });
+
+        // Validate passwords match
+    //     if (password !== confirm_password) {
+    //         alert('Passwords do not match!');
+    //         return;
+    //     }
+    //     try {
+
+    //         const response = await fetch('http://localhost:4000/auth/register', {
+    //         method: 'POST',
+    //         headers: {
+    //            'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ username, email, password, confirm_password })
+    //         });
+    //         if(response.status === 200) {
+    //             alert('Registration successful!');
+    //             window.location.href="login.html";
+    //         } else {
+    //             alert('Registration failed.');
+    //         }
+
+    //     } catch (err) {
+    //         alert('An error occurred: ' + err);
+    //     }
+        
+        
+    // });
+</script>
+</html>
